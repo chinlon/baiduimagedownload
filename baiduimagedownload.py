@@ -80,6 +80,47 @@ class Baiduimage():
 
             print "\nwork end"
 
+    def dowload_image_thread(self,threadnumber = 2):
+        """
+        
+        """
+        (urls,urlnumber) = self.parse_body()
+
+        print "Download start press Ctrl+Break to stop "
+        def dowload(url):
+            try:
+                urlretrieve(url,self.image_name(url))
+            except:
+                print url
+                return False
+            return True
+
+        from Queue import Queue
+        from threading import Thread
+        from itertools import count
+        def worker(count=count()):
+
+            while True:
+                (id,item) = q.get()
+
+                if(dowload(item)):
+
+                    sys.stdout.write("Dowdload["+str(id+1)+"] has download "+str(next(count) + 1)+chr(8)*80)
+                    sys.stdout.flush()
+
+                q.task_done()
+
+        q = Queue()
+        for i in range(threadnumber):
+            t = Thread(target=worker)
+            t.daemon = True
+            t.start()
+
+        for id,item in enumerate(urls):
+            q.put((id,item))
+        q.join()       # block until all tasks are done
+        print "work end"
+
 if __name__ == "__main__":
-    print "this is a test"
-    Baiduimage("明星", "刘德华", 100).dowload_image()#自定义分类 关键词 图片个数 存放路径
+    print "this is a test with thread "
+    Baiduimage("明星", "刘德华", 100).dowload_image_thread()#自定义分类 关键词 图片个数 存放路径
