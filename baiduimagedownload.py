@@ -19,7 +19,7 @@ tag2 分标签
 6.多线程加快点效率
 '''
 
-from urllib import urlretrieve
+from urllib import urlretrieve,urlcleanup
 from urllib2 import *
 import json
 from hashlib import md5
@@ -61,6 +61,7 @@ class Baiduimage():
         def dowload(url):
             try:
                 urlretrieve(url,self.image_name(url))
+                urlcleanup()
             except:
                 return False
             return True
@@ -90,8 +91,8 @@ class Baiduimage():
         def dowload(url):
             try:
                 urlretrieve(url,self.image_name(url))
+                urlcleanup()
             except:
-                print url
                 return False
             return True
 
